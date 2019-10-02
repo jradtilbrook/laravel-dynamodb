@@ -44,6 +44,12 @@ dynamodb.createTable(params, function(err, data) {
     if (err) print(err); // an error occurred
     else print(data); // successful response
 });
+// create another table with a fixed prefix
+params.TableName = 'test_' + params.TableName;
+dynamodb.createTable(params, function(err, data) {
+    if (err) print(err); // an error occurred
+    else print(data); // successful response
+});
 
 // Table with composite keys:
 
@@ -117,6 +123,12 @@ params = {
         // ... more global secondary indexes ...
     ]
 };
+dynamodb.createTable(params, function(err, data) {
+    if (err) print(err); // an error occurred
+    else print(data); // successful response
+});
+// create another table with a fixed prefix
+params.TableName = 'test_' + params.TableName;
 dynamodb.createTable(params, function(err, data) {
     if (err) print(err); // an error occurred
     else print(data); // successful response

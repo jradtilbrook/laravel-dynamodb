@@ -39,6 +39,7 @@ abstract class DynamoDbTestCase extends TestCase
             ],
             'region' => 'test',
             'endpoint' => 'http://localhost:3000',
+            'prefix' => 'test_'
         ]);
     }
 

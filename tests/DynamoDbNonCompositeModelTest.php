@@ -26,7 +26,7 @@ class DynamoDbNonCompositeModelTest extends DynamoDbModelTest
         $this->testModel->save();
 
         $query = [
-            'TableName' => $this->testModel->getTable(),
+            'TableName' => 'test_' . $this->testModel->getTable(),
             'Key' => [
                 'id' => ['S' => $this->testModel->id]
             ],
@@ -555,7 +555,7 @@ class DynamoDbNonCompositeModelTest extends DynamoDbModelTest
         $raw = $this->testModel->toDynamoDbQuery(['count(*)']);
 
         $this->assertEquals([
-            'TableName' => $this->testModel->getTable(),
+            'TableName' => 'test_' . $this->testModel->getTable(),
             'Select' => 'COUNT',
         ], $raw->query);
     }
@@ -971,7 +971,7 @@ class DynamoDbNonCompositeModelTest extends DynamoDbModelTest
                 'FilterExpression' => '#foo = :a1',
                 'ExpressionAttributeNames' => ['#foo' => 'foo'],
                 'ExpressionAttributeValues' => [':a1' => ['S' => 'bar']],
-                'TableName' => $this->testModel->getTable(),
+                'TableName' => 'test_' . $this->testModel->getTable(),
             ],
             $queryWithoutDecorate->toDynamoDbQuery()->query
         );
@@ -987,7 +987,7 @@ class DynamoDbNonCompositeModelTest extends DynamoDbModelTest
                 'FilterExpression' => '#foo = :a1 AND extra_col = :extra_col_val',
                 'ExpressionAttributeNames' => ['#foo' => 'foo'],
                 'ExpressionAttributeValues' => [':a1' => ['S' => 'bar'], ':extra_col_val' => ['N' => 0]],
-                'TableName' => $this->testModel->getTable(),
+                'TableName' => 'test_' . $this->testModel->getTable(),
             ],
             $queryWithDecorate->toDynamoDbQuery()->query
         );

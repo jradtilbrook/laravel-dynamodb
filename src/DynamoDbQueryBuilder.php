@@ -36,6 +36,11 @@ class DynamoDbQueryBuilder
     protected $model;
 
     /**
+     * @var string
+     */
+    protected $prefix;
+
+    /**
      * @var \Aws\DynamoDb\DynamoDbClient
      */
     protected $client;
@@ -75,9 +80,10 @@ class DynamoDbQueryBuilder
      */
     protected $index;
 
-    public function __construct(DynamoDbModel $model)
+    public function __construct(DynamoDbModel $model, string $prefix)
     {
         $this->model = $model;
+        $this->prefix = $prefix;
         $this->client = $model->getClient();
         $this->setupExpressions();
     }
@@ -458,7 +464,7 @@ class DynamoDbQueryBuilder
 
         $this->model->setId($id);
 
-        $query = DynamoDb::table($this->model->getTable())
+        $query = DynamoDb::table($this->prefix . $this->model->getTable())
             ->setKey(DynamoDb::marshalItem($this->model->getKeys()))
             ->setConsistentRead(true);
 
@@ -500,7 +506,7 @@ class DynamoDbQueryBuilder
 
         $this->resetExpressions();
 
-        $table = $this->model->getTable();
+        $table = $this->prefix . $this->model->getTable();
 
         $keys = collect($ids)->map(function ($id) {
             if (! is_array($id)) {
@@ -593,7 +599,7 @@ class DynamoDbQueryBuilder
         $this->resetExpressions();
 
         /** @var \Aws\Result $result */
-        $result = DynamoDb::table($this->model->getTable())
+        $result = DynamoDb::table($this->prefix . $this->model->getTable())
             ->setKey($key)
             ->setUpdateExpression($this->updateExpression->remove($attributes))
             ->setExpressionAttributeNames($this->expressionAttributeNames->all())
@@ -613,7 +619,7 @@ class DynamoDbQueryBuilder
 
     public function delete()
     {
-        $result = DynamoDb::table($this->model->getTable())
+        $result = DynamoDb::table($this->prefix . $this->model->getTable())
             ->setKey(DynamoDb::marshalItem($this->model->getKeys()))
             ->prepare($this->client)
             ->deleteItem();
@@ -623,7 +629,7 @@ class DynamoDbQueryBuilder
 
     public function deleteAsync()
     {
-        $promise = DynamoDb::table($this->model->getTable())
+        $promise = DynamoDb::table($this->prefix . $this->model->getTable())
             ->setKey(DynamoDb::marshalItem($this->model->getKeys()))
             ->prepare($this->client)
             ->deleteItemAsync();
@@ -633,7 +639,7 @@ class DynamoDbQueryBuilder
 
     public function save()
     {
-        $result = DynamoDb::table($this->model->getTable())
+        $result = DynamoDb::table($this->prefix . $this->model->getTable())
             ->setItem(DynamoDb::marshalItem($this->model->getAttributes()))
             ->prepare($this->client)
             ->putItem();
@@ -643,7 +649,7 @@ class DynamoDbQueryBuilder
 
     public function saveAsync()
     {
-        $promise = DynamoDb::table($this->model->getTable())
+        $promise = DynamoDb::table($this->prefix . $this->model->getTable())
             ->setItem(DynamoDb::marshalItem($this->model->getAttributes()))
             ->prepare($this->client)
             ->putItemAsync();
@@ -742,7 +748,7 @@ class DynamoDbQueryBuilder
         $this->resetExpressions();
 
         $op = 'Scan';
-        $queryBuilder = DynamoDb::table($this->model->getTable());
+        $queryBuilder = DynamoDb::table($this->prefix . $this->model->getTable());
 
         if (! empty($this->wheres)) {
             $analyzer = $this->getConditionAnalyzer();

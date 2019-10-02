@@ -287,7 +287,8 @@ abstract class DynamoDbModel extends Model
      */
     public function newQuery()
     {
-        $builder = new DynamoDbQueryBuilder($this);
+        $prefix = static::$dynamoDb->getPrefix($this->connection);
+        $builder = new DynamoDbQueryBuilder($this, $prefix);
 
         foreach ($this->getGlobalScopes() as $identifier => $scope) {
             $builder->withGlobalScope($identifier, $scope);

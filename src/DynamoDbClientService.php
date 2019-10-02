@@ -52,6 +52,14 @@ class DynamoDbClientService implements DynamoDbClientInterface
         return $client;
     }
 
+    public function getPrefix($connection = null)
+    {
+        $connection = $connection ?: config('dynamodb.default');
+        $config = config("dynamodb.connections.$connection", []);
+
+        return $config['prefix'] ?? '';
+    }
+
     /**
      * @return \Aws\DynamoDb\Marshaler
      */
