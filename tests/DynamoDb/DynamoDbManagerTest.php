@@ -34,7 +34,7 @@ class DynamoDbManagerTest extends DynamoDbTestCase
         $service->method('getMarshaler')->willReturn(new Marshaler());
         $service->method('getClient')->willReturn($this->mockedClient);
 
-        $this->manager = with(new DynamoDbManager($service));
+        $this->manager = with(new DynamoDbManager($service, 'test_'));
     }
 
     public function testPutItem()
@@ -42,7 +42,7 @@ class DynamoDbManagerTest extends DynamoDbTestCase
         $this->mockedClient->expects($this->once())
             ->method('putItem')
             ->with([
-                'TableName' => 'articles',
+                'TableName' => 'test_articles',
                 'Item' => [
                     'id' => ['S' => 'ae025ed8'],
                     'author_name' => ['S' => 'Bao'],
@@ -60,7 +60,7 @@ class DynamoDbManagerTest extends DynamoDbTestCase
         $this->mockedClient->expects($this->once())
             ->method('updateItem')
             ->with([
-                'TableName' => 'articles',
+                'TableName' => 'test_articles',
                 'Key' => ['id' => ['S' => 'ae025ed8']],
                 'UpdateExpression' => 'REMOVE #c, #t',
                 'ExpressionAttributeNames' => ['#c' => 'comments', '#t' => 'tags'],
@@ -80,7 +80,7 @@ class DynamoDbManagerTest extends DynamoDbTestCase
         $this->mockedClient->expects($this->once())
             ->method('deleteItem')
             ->with([
-                'TableName' => 'articles',
+                'TableName' => 'test_articles',
                 'Key' => ['id' => ['S' => 'ae025ed8']],
             ]);
 
@@ -95,7 +95,7 @@ class DynamoDbManagerTest extends DynamoDbTestCase
         $this->mockedClient->expects($this->once())
             ->method('scan')
             ->with([
-                'TableName' => 'articles',
+                'TableName' => 'test_articles',
                 'Limit' => 2,
                 'FilterExpression' => '#c > :count AND #t IN :tags',
                 'ExpressionAttributeNames' => ['#c' => 'comments', '#t' => 'tags'],
@@ -121,7 +121,7 @@ class DynamoDbManagerTest extends DynamoDbTestCase
         $this->mockedClient->expects($this->once())
             ->method('query')
             ->with([
-                'TableName' => 'articles',
+                'TableName' => 'test_articles',
                 'Limit' => 2,
                 'IndexName' => 'author_name',
                 'KeyConditionExpression' => '#name = :name',

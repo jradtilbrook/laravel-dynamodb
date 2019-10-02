@@ -17,13 +17,19 @@ class DynamoDbManager
     private $service;
 
     /**
+     * @var string
+     */
+    private $prefix;
+
+    /**
      * @var \Aws\DynamoDb\Marshaler
      */
     public $marshaler;
 
-    public function __construct(DynamoDbClientInterface $service)
+    public function __construct(DynamoDbClientInterface $service, string $prefix)
     {
         $this->service = $service;
+        $this->prefix = $prefix;
         $this->marshaler = $service->getMarshaler();
     }
 
@@ -70,6 +76,6 @@ class DynamoDbManager
      */
     public function table($table)
     {
-        return $this->newQuery()->setTableName($table);
+        return $this->newQuery()->setTableName($this->prefix . $table);
     }
 }
